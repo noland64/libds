@@ -1,18 +1,27 @@
-#include "dynamic_array.h"
 #include <stdlib.h>
+#include "dynamic_array.h"
+#include "errors.h"
 
-struct DynamicArray 
+struct DynamicArray
 {
     int* arr;
     int num_elems;
-    int size;
+    size_t size;
 };
 
 // Create new dynamic array
-DynamicArray* dynamic_array_create()
+DynamicArray* dynamic_array_create(void)
 {
     DynamicArray* array = malloc(sizeof(DynamicArray));
+    if (array == NULL) {
+        return NULL;
+    }
 	array->arr = malloc(sizeof(int));
+    if (array->arr == NULL)
+    {
+        free(array);
+        return NULL;
+    }
 	array->size = 1;
 	array->num_elems = 0;
 	return array;
@@ -35,7 +44,7 @@ int dynamic_array_insert(DynamicArray* array, int index, int val)
         return NULL_OBJECT_ERROR;
     if ((index < 0) || (index > array->num_elems))
         return OUT_OF_BOUNDS_ERROR;
-    
+
     // Double size of array if full
     if (array->num_elems == array->size)
     {
@@ -76,7 +85,7 @@ int dynamic_array_remove(DynamicArray* array, int index)
 	{
         array->size /= 2;
 		array->arr = realloc(array->arr, sizeof(int) * array->size);
-	} 
+	}
     return 1;
 }
 
@@ -103,9 +112,9 @@ int dynamic_array_pop(DynamicArray* array, int index)
 }
 
 // Returns size of array
-int dynamic_array_size(DynamicArray* array)
+size_t dynamic_array_size(DynamicArray* array)
 {
     if (array == NULL)
-        return NULL_OBJECT_ERROR;
+        return 0;
     return array->num_elems;
 }

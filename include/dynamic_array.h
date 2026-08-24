@@ -1,16 +1,12 @@
 #ifndef DYNAMIC_ARRAY_H
 #define DYNAMIC_ARRAY_H
 
-#define NULL_OBJECT_ERROR -7777
-#define OUT_OF_BOUNDS_ERROR -8888
-
-#include <stdbool.h>
 
 
 typedef struct DynamicArray DynamicArray;
 
 // Create new dynamic array
-DynamicArray* dynamic_array_create();
+DynamicArray* dynamic_array_create(void);
 
 // Destroy the dynamic array and free its memory
 int dynamic_array_destroy(DynamicArray* array);
@@ -28,7 +24,7 @@ int dynamic_array_get(DynamicArray* array, int index);
 int dynamic_array_pop(DynamicArray* array, int index);
 
 // Returns size of array
-int dynamic_array_size(DynamicArray* array);
+size_t dynamic_array_size(DynamicArray* array);
 
 /*
 // Returns a string representing the elements of the array

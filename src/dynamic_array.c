@@ -1,0 +1,111 @@
+#include "dynamic_array.h"
+#include <stdlib.h>
+
+struct DynamicArray 
+{
+    int* arr;
+    int num_elems;
+    int size;
+};
+
+// Create new dynamic array
+DynamicArray* dynamic_array_create()
+{
+    DynamicArray* array = malloc(sizeof(DynamicArray));
+	array->arr = malloc(sizeof(int));
+	array->size = 1;
+	array->num_elems = 0;
+	return array;
+}
+
+// Destroy the dynamic array and free its memory
+int dynamic_array_destroy(DynamicArray* array)
+{
+    if (array == NULL)
+        return NULL_OBJECT_ERROR;
+    free(array->arr);
+    free(array);
+	return 1;
+}
+
+// Insert value at index
+int dynamic_array_insert(DynamicArray* array, int index, int val)
+{
+    if (array == NULL)
+        return NULL_OBJECT_ERROR;
+    if ((index < 0) || (index > array->num_elems))
+        return OUT_OF_BOUNDS_ERROR;
+    
+    // Double size of array if full
+    if (array->num_elems == array->size)
+    {
+        array->size *= 2;
+		array->arr = realloc(array->arr, sizeof(int) * array->size);
+    }
+    // Shift necessary elements right
+    for (int i = array->num_elems; i > index; i--)
+    {
+        array->arr[i] = array->arr[i-1];
+    }
+    // Insert new element
+    array->arr[index] = val;
+    array->num_elems++;
+    return 1;
+}
+
+
+// Removes value at index
+int dynamic_array_remove(DynamicArray* array, int index)
+{
+    // Check for proper input
+    if (array == NULL)
+        return NULL_OBJECT_ERROR;
+    if ((index < 0) || (index >= array->num_elems))
+        return OUT_OF_BOUNDS_ERROR;
+
+    // Shift necessary items left
+    for (int i = index; i < array->num_elems - 1; i++)
+    {
+        array->arr[i] = array->arr[i+1];
+    }
+    // Remove item
+    array->num_elems--;
+
+    // Shrink array if over half empty
+	if ((array->size > 1) && (array->num_elems < (array->size / 4)))
+	{
+        array->size /= 2;
+		array->arr = realloc(array->arr, sizeof(int) * array->size);
+	} 
+    return 1;
+}
+
+// Returns value at index
+int dynamic_array_get(DynamicArray* array, int index)
+{
+    if (array == NULL)
+        return NULL_OBJECT_ERROR;
+    if ((index < 0) || (index >= array->num_elems))
+        return OUT_OF_BOUNDS_ERROR;
+    return array->arr[index];
+}
+
+// Removes and returns value at index
+int dynamic_array_pop(DynamicArray* array, int index)
+{
+    if (array == NULL)
+        return NULL_OBJECT_ERROR;
+    if ((index < 0) || (index >= array->num_elems))
+        return OUT_OF_BOUNDS_ERROR;
+    int val = dynamic_array_get(array, index);
+    dynamic_array_remove(array, index);
+    return val;
+}
+
+// Returns size of array
+int dynamic_array_size(DynamicArray* array)
+{
+    if (array == NULL)
+        return NULL_OBJECT_ERROR;
+    return array->num_elems;
+}

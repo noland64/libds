@@ -23,5 +23,7 @@ struct TreeNode {
 };
 
 Node* node_create(int val, Node* next);
-int node_destroy(Node* node);
+void node_destroy(Node* node);
+DoubleNode* double_node_create(int val, DoubleNode* prev, DoubleNode* next);
+void double_node_destroy(DoubleNode* node);
 #endif

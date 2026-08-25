@@ -21,7 +21,7 @@ int linked_list_get(LinkedList* list, int index);
 // Removes and returns value at index
 int linked_list_pop(LinkedList* list, int index);
 
-// Returns size of array
-size_t linked_list_size(LinkedList* list);
+// Returns size of linked list
+int linked_list_size(LinkedList* list);
 
 #endif

@@ -6,7 +6,7 @@
 struct LinkedList
 {
     Node* head;
-    size_t size;
+    int size;
 };
 
 // Create new linked list
@@ -25,12 +25,18 @@ LinkedList* linked_list_create(void)
 int linked_list_destroy(LinkedList* list)
 {
     if (list == NULL)
+    {
         return NULL_OBJECT_ERROR;
-
-    while (list->size > 0)
-        linked_list_remove(list, 0);
+    }
+    Node* node = list->head;
+    while (node != NULL)
+    {
+        Node* next = node->next;
+        node_destroy(node);
+        node = next;
+    }
     free(list);
-    return 1;
+    return SUCCESS;
 }
 
 static Node* node_at_index(LinkedList* list, int index)
@@ -59,7 +65,7 @@ int linked_list_insert(LinkedList* list, int index, int val)
     else
         prev->next = node_create(val, prev->next);
     list->size++;
-    return 1;
+    return SUCCESS;
 }
 
 // Removes value at index
@@ -83,7 +89,7 @@ int linked_list_remove(LinkedList* list, int index)
     list->size--;
     // Free the allocated memory for node at index
     node_destroy(removed);
-    return 1;
+    return SUCCESS;
 }
 
 // Returns value at index
@@ -123,10 +129,10 @@ int linked_list_pop(LinkedList* list, int index)
 }
 
 // Returns number of elements in list
-size_t linked_list_size(LinkedList* list)
+int linked_list_size(LinkedList* list)
 {
     if (list == NULL)
-        return 0;
+        return NULL_OBJECT_ERROR;
 
     return list->size;
 }

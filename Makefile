@@ -8,7 +8,7 @@ tests := $(wildcard test/*.c)
 all: libds.a
 
 libds.a: $(objects)
-	ar rcs libds.a $(objects) 
+	ar rcs libds.a $(objects)
 
 build/%.o: src/%.c
 	mkdir -p build/

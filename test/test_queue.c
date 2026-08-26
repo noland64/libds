@@ -47,7 +47,7 @@ static void test_enqueue(void)
     queueDestroy(queue);
 }
 
-int test_dequeue(void)
+void test_dequeue(void)
 {
     Queue* queue = NULL;
     assert(queueDequeue(queue) == NULL_OBJECT_ERROR);
@@ -60,7 +60,7 @@ int test_dequeue(void)
     queueDestroy(queue);
 }
 
-int test_peek(void)
+void test_peek(void)
 {
     Queue* queue = NULL;
     assert(queuePeek(queue) == NULL_OBJECT_ERROR);
@@ -77,7 +77,7 @@ int test_peek(void)
     queueDestroy(queue);
 }
 
-int test_size(void)
+void test_size(void)
 {
     Queue* queue = NULL;
     assert(queueSize(queue) == NULL_OBJECT_ERROR);
@@ -110,6 +110,5 @@ int main(void)
     test_dequeue();
     test_peek();
     test_size();
-
-    fprintf(stderr, "QUEUE PASSED ALL TESTS.\n");
+    return 0;
 }

@@ -138,7 +138,5 @@ int main(void)
     test_push();
     test_pop();
     test_size();
-
-    fprintf(stderr, "PASSED ALL TESTS\n");
     return 0;
 }

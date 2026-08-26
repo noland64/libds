@@ -1,15 +1,18 @@
 CC = gcc
 CFLAGS = -Wall -Iinclude
 
+LIB = libds.a
+
 SRCS := $(wildcard src/*.c)
 OBJS := $(patsubst src/%.c, build/%.o, $(SRCS))
 TEST_SRCS = $(wildcard test/*.c)
 TESTS := $(patsubst test/%.c, bin/%, $(TEST_SRCS))
 
-all: libds.a
+all: $(LIB)
 
-libds.a: $(OBJS)
-	ar rcs libds.a $(OBJS)
+$(LIB): $(OBJS)
+	@rm -rf bin/
+	ar rcs $@ $(OBJS)
 
 build/%.o: src/%.c
 	@mkdir -p build/

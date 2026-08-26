@@ -23,7 +23,16 @@ struct TreeNode {
 };
 
 Node* node_create(int val, Node* next);
-void node_destroy(Node* node);
-DoubleNode* double_node_create(int val, DoubleNode* prev, DoubleNode* next);
-void double_node_destroy(DoubleNode* node);
+int node_destroy(Node* node);
+
+// doubleNodeCreate(int val, DoubleNode* prev, DoubleNode* next)
+// Create and allocate memory for new DoubleNode
+// Return newly created DoubleNode, or NULL in the event of error
+DoubleNode* doubleNodeCreate(int val, DoubleNode* prev, DoubleNode* next);
+
+// doubleNodeDestroy(Deque* deque)
+// Destroy node and free allocated memory
+// Return success/error code
+int doubleNodeDestroy(DoubleNode* node);
+
 #endif

@@ -10,8 +10,7 @@ struct DoublyLinkedList
     size_t size;
 };
 
-// Create new doubly linked list
-DoublyLinkedList* doubly_linked_list_create(void)
+DoublyLinkedList* dllCreate(void)
 {
     DoublyLinkedList* list = malloc(sizeof(DoublyLinkedList));
     if (list == NULL) {
@@ -23,8 +22,7 @@ DoublyLinkedList* doubly_linked_list_create(void)
     return list;
 }
 
-// Destroy the doubly linked list and free its memory
-int doubly_linked_list_destroy(DoublyLinkedList* list)
+int dllDestroy(DoublyLinkedList* list)
 {
     if (list == NULL) {
         return NULL_OBJECT_ERROR;
@@ -33,14 +31,14 @@ int doubly_linked_list_destroy(DoublyLinkedList* list)
     while (node != NULL)
     {
         DoubleNode* next = node->next;
-        double_node_destroy(node);
+        doubleNodeDestroy(node);
         node = next;
     }
     free(list);
     return SUCCESS;
 }
 
-static DoubleNode* node_at_index(DoublyLinkedList* list, int index)
+static DoubleNode* nodeAtIndex(DoublyLinkedList* list, int index)
 {
     if (list == NULL)
         return NULL;
@@ -50,19 +48,21 @@ static DoubleNode* node_at_index(DoublyLinkedList* list, int index)
     if (index < (list->size - 1) / 2)
     {
         node = list->head;
-        for (int i = 0; i < index; i++)
+        for (int i = 0; i < index; i++) {
             node = node->next;
+        }
     }
     else
     {
         node = list->tail;
-        for (int i = list->size - 1; i > index; i--)
+        for (int i = list->size - 1; i > index; i--) {
             node = node->prev;
+        }
     }
     return node;
 }
 
-static DoubleNode* unlink_node(DoublyLinkedList* list, int index)
+static DoubleNode* unlinkNode(DoublyLinkedList* list, int index)
 {
     if (list == NULL) {
         return NULL;
@@ -70,7 +70,7 @@ static DoubleNode* unlink_node(DoublyLinkedList* list, int index)
     if ((index < 0) || (index >= list->size)) {
         return NULL;
     }
-    DoubleNode* removed = node_at_index(list, index);
+    DoubleNode* removed = nodeAtIndex(list, index);
     if (list->head == list->tail)
     {
         list->head = list->tail = NULL;
@@ -94,15 +94,14 @@ static DoubleNode* unlink_node(DoublyLinkedList* list, int index)
     return removed;
 }
 
-// Insert value at index
-int doubly_linked_list_insert(DoublyLinkedList* list, int index, int val)
+int dllInsert(DoublyLinkedList* list, int index, int val)
 {
     if (list == NULL)
         return NULL_OBJECT_ERROR;
     if ((index < 0) || (index > list->size))
         return OUT_OF_BOUNDS_ERROR;
 
-    DoubleNode* newNode = double_node_create(val, NULL, NULL);
+    DoubleNode* newNode = doubleNodeCreate(val, NULL, NULL);
     if (newNode == NULL)
         return MEMORY_ERROR;
 
@@ -133,7 +132,7 @@ int doubly_linked_list_insert(DoublyLinkedList* list, int index, int val)
     // Insert middle of list
     else
     {
-        DoubleNode* prevNode = node_at_index(list, index - 1);
+        DoubleNode* prevNode = nodeAtIndex(list, index - 1);
         DoubleNode* nextNode = prevNode->next;
         // Point newNode at correct nodes
         newNode->prev = prevNode;
@@ -146,46 +145,97 @@ int doubly_linked_list_insert(DoublyLinkedList* list, int index, int val)
     return SUCCESS;
 }
 
+int dllInsertLeft(DoublyLinkedList* list, int val)
+{
+    return dllInsert(list, 0, val);
+}
+
+int dllInsertRight(DoublyLinkedList* list, int val)
+{
+    if (list == NULL)
+        return NULL_OBJECT_ERROR;
+    return dllInsert(list, list->size, val);
+}
+
 // Removes value at index
-int doubly_linked_list_remove(DoublyLinkedList* list, int index)
+int dllRemove(DoublyLinkedList* list, int index)
 {
     if (list == NULL)
         return NULL_OBJECT_ERROR;
     if ((index < 0) || (index >= list->size))
         return OUT_OF_BOUNDS_ERROR;
 
-    DoubleNode* removed = unlink_node(list, index);
-    double_node_destroy(removed);
+    DoubleNode* removed = unlinkNode(list, index);
+    doubleNodeDestroy(removed);
     return SUCCESS;
 }
 
+int dllRemoveLeft(DoublyLinkedList* list)
+{
+    return dllRemove(list, 0);
+}
+
+int dllRemoveRight(DoublyLinkedList* list)
+{
+    if (list == NULL) {
+        return NULL_OBJECT_ERROR;
+    }
+    return dllRemove(list, list->size - 1);
+}
+
 // Returns value at index
-int doubly_linked_list_get(DoublyLinkedList* list, int index)
+int dllGet(DoublyLinkedList* list, int index)
 {
     if (list == NULL)
         return NULL_OBJECT_ERROR;
     if ((index < 0) || (index >= list->size))
         return OUT_OF_BOUNDS_ERROR;
 
-    return node_at_index(list, index)->val;
+    return nodeAtIndex(list, index)->val;
+}
+
+int dllGetLeft(DoublyLinkedList* list)
+{
+    return dllGet(list, 0);
+}
+
+int dllGetRight(DoublyLinkedList* list)
+{
+    if (list == NULL) {
+        return NULL_OBJECT_ERROR;
+    }
+    return dllGet(list, list->size - 1);
 }
 
 // Removes and returns value at index
-int doubly_linked_list_pop(DoublyLinkedList* list, int index)
+int dllPop(DoublyLinkedList* list, int index)
 {
     if (list == NULL)
         return NULL_OBJECT_ERROR;
     if ((index < 0) || (index >= list->size))
         return OUT_OF_BOUNDS_ERROR;
 
-    DoubleNode* removed = unlink_node(list, index);
+    DoubleNode* removed = unlinkNode(list, index);
     int val = removed->val;
-    double_node_destroy(removed);
+    doubleNodeDestroy(removed);
     return val;
 }
 
+int dllPopLeft(DoublyLinkedList* list)
+{
+    return dllPop(list, 0);
+}
+
+int dllPopRight(DoublyLinkedList* list)
+{
+    if (list == NULL) {
+        return NULL_OBJECT_ERROR;
+    }
+    return dllPop(list, list->size - 1);
+}
+
 // Returns size of doubly linked list
-size_t doubly_linked_list_size(DoublyLinkedList* list)
+size_t dllSize(DoublyLinkedList* list)
 {
     if (list == NULL)
         return 0;

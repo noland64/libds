@@ -13,14 +13,16 @@ Node* node_create(int val, Node* next)
     return node;
 }
 
-void node_destroy(Node* node)
+int node_destroy(Node* node)
 {
-    if (node != NULL) {
-        free(node);
+    if (node == NULL) {
+        return NULL_OBJECT_ERROR;
     }
+    free(node);
+    return SUCCESS;
 }
 
-DoubleNode* double_node_create(int val, DoubleNode* prev, DoubleNode* next)
+DoubleNode* doubleNodeCreate(int val, DoubleNode* prev, DoubleNode* next)
 {
     DoubleNode* node = malloc(sizeof(DoubleNode));
     if (node == NULL) {
@@ -32,9 +34,11 @@ DoubleNode* double_node_create(int val, DoubleNode* prev, DoubleNode* next)
     return node;
 }
 
-void double_node_destroy(DoubleNode* node)
+int doubleNodeDestroy(DoubleNode* node)
 {
-    if (node != NULL) {
-        free(node);
+    if (node == NULL) {
+        return NULL_OBJECT_ERROR;
     }
+    free(node);
+    return SUCCESS;
 }

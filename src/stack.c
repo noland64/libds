@@ -7,7 +7,7 @@ struct Stack {
 	DynamicArray* array;
 };
 
-Stack* stack_create(void)
+Stack* stackCreate(void)
 {
 	Stack* stack = malloc(sizeof(Stack));
 	if (stack == NULL) {
@@ -22,7 +22,7 @@ Stack* stack_create(void)
 	return stack;
 }
 
-int stack_destroy(Stack* stack)
+int stackDestroy(Stack* stack)
 {
 	if (stack == NULL)
 		return NULL_OBJECT_ERROR;
@@ -31,14 +31,14 @@ int stack_destroy(Stack* stack)
 	return 1;
 }
 
-int stack_push(Stack* stack, int val)
+int stackPush(Stack* stack, int val)
 {
 	if (stack == NULL)
 		return NULL_OBJECT_ERROR;
 	return dynamicArrayInsert(stack->array, dynamicArraySize(stack->array), val);
 }
 
-int stack_pop(Stack* stack)
+int stackPop(Stack* stack)
 {
 	if (stack == NULL)
 		return NULL_OBJECT_ERROR;
@@ -47,7 +47,7 @@ int stack_pop(Stack* stack)
 	return dynamicArrayPop(stack->array, dynamicArraySize(stack->array)-1);
 }
 
-int stack_peek(Stack* stack)
+int stackPeek(Stack* stack)
 {
 	if (stack == NULL)
 		return NULL_OBJECT_ERROR;
@@ -56,7 +56,7 @@ int stack_peek(Stack* stack)
 	return dynamicArrayGet(stack->array, dynamicArraySize(stack->array)-1);
 }
 
-size_t stack_size(Stack* stack)
+int stackSize(Stack* stack)
 {
 	if (stack == NULL)
 		return 0;

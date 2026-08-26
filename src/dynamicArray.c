@@ -1,16 +1,16 @@
 #include <stdlib.h>
-#include "dynamic_array.h"
+#include "dynamicArray.h"
 #include "errors.h"
 
 struct DynamicArray
 {
     int* arr;
     int num_elems;
-    size_t size;
+    int size;
 };
 
 // Create new dynamic array
-DynamicArray* dynamic_array_create(void)
+DynamicArray* dynamicArrayCreate(void)
 {
     DynamicArray* array = malloc(sizeof(DynamicArray));
     if (array == NULL) {
@@ -28,7 +28,7 @@ DynamicArray* dynamic_array_create(void)
 }
 
 // Destroy the dynamic array and free its memory
-int dynamic_array_destroy(DynamicArray* array)
+int dynamicArrayDestroy(DynamicArray* array)
 {
     if (array == NULL)
         return NULL_OBJECT_ERROR;
@@ -38,7 +38,7 @@ int dynamic_array_destroy(DynamicArray* array)
 }
 
 // Insert value at index
-int dynamic_array_insert(DynamicArray* array, int index, int val)
+int dynamicArrayInsert(DynamicArray* array, int index, int val)
 {
     if (array == NULL)
         return NULL_OBJECT_ERROR;
@@ -64,7 +64,7 @@ int dynamic_array_insert(DynamicArray* array, int index, int val)
 
 
 // Removes value at index
-int dynamic_array_remove(DynamicArray* array, int index)
+int dynamicArrayRemove(DynamicArray* array, int index)
 {
     // Check for proper input
     if (array == NULL)
@@ -90,7 +90,7 @@ int dynamic_array_remove(DynamicArray* array, int index)
 }
 
 // Returns value at index
-int dynamic_array_get(DynamicArray* array, int index)
+int dynamicArrayGet(DynamicArray* array, int index)
 {
     if (array == NULL)
         return NULL_OBJECT_ERROR;
@@ -100,21 +100,21 @@ int dynamic_array_get(DynamicArray* array, int index)
 }
 
 // Removes and returns value at index
-int dynamic_array_pop(DynamicArray* array, int index)
+int dynamicArrayPop(DynamicArray* array, int index)
 {
     if (array == NULL)
         return NULL_OBJECT_ERROR;
     if ((index < 0) || (index >= array->num_elems))
         return OUT_OF_BOUNDS_ERROR;
-    int val = dynamic_array_get(array, index);
-    dynamic_array_remove(array, index);
+    int val = dynamicArrayGet(array, index);
+    dynamicArrayRemove(array, index);
     return val;
 }
 
 // Returns size of array
-size_t dynamic_array_size(DynamicArray* array)
+int dynamicArraySize(DynamicArray* array)
 {
     if (array == NULL)
-        return 0;
+        return NULL_OBJECT_ERROR;
     return array->num_elems;
 }

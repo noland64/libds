@@ -16,7 +16,9 @@ Queue* queueCreate(void)
         return NULL;
     }
     queue->deque = dequeCreate();
-    if (queue->deque == NULL) {
+    if (queue->deque == NULL)
+    {
+        free(queue);
         return NULL;
     }
     queue->size = 0;

@@ -19,7 +19,9 @@ Deque* dequeCreate(void)
         return NULL;
     }
     deque->list = dllCreate();
-    if (deque->list == NULL) {
+    if (deque->list == NULL)
+    {
+        free(deque);
         return NULL;
     }
     deque->size = 0;

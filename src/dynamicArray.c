@@ -37,6 +37,16 @@ int dynamicArrayDestroy(DynamicArray* array)
 	return 1;
 }
 
+int dynamicArrayReplace(DynamicArray* array, int index, int val)
+{
+    if (array == NULL)
+        return NULL_OBJECT_ERROR;
+    if ((index < 0) || (index >= array->num_elems))
+        return OUT_OF_BOUNDS_ERROR;
+    array->arr[index] = val;
+    return SUCCESS;
+}
+
 // Insert value at index
 int dynamicArrayInsert(DynamicArray* array, int index, int val)
 {

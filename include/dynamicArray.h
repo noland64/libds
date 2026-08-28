@@ -24,6 +24,7 @@ int dynamicArrayPop(DynamicArray* array, int index);
 // Returns size of array
 int dynamicArraySize(DynamicArray* array);
 
+int dynamicArrayReplace(DynamicArray* array, int index, int val);
 /*
 // Returns a string representing the elements of the array
 char* DynamicArraystring(DynamicArray* array);

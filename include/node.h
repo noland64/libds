@@ -1,9 +1,12 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include <stdbool.h>
+
 typedef struct Node Node;
 typedef struct DoubleNode DoubleNode;
 typedef struct TreeNode TreeNode;
+typedef struct RBTreeNode RBTreeNode;
 
 struct Node {
     int val;
@@ -22,17 +25,30 @@ struct TreeNode {
     TreeNode* right;
 };
 
+struct RBTreeNode {
+    int key;
+    int val;
+    bool isRed;
+    RBTreeNode* left;
+    RBTreeNode* right;
+};
+
 Node* node_create(int val, Node* next);
 int node_destroy(Node* node);
 
-// doubleNodeCreate(int val, DoubleNode* prev, DoubleNode* next)
 // Create and allocate memory for new DoubleNode
 // Return newly created DoubleNode, or NULL in the event of error
 DoubleNode* doubleNodeCreate(int val, DoubleNode* prev, DoubleNode* next);
 
-// doubleNodeDestroy(Deque* deque)
 // Destroy node and free allocated memory
 // Return success/error code
 int doubleNodeDestroy(DoubleNode* node);
 
+// Create and allocate memory for new RBTreeNode
+// Return newly created RBTreeNode, or NULL in the event of error
+RBTreeNode* rbTreeNodeCreate(int key, int val, bool isRed, RBTreeNode* left, RBTreeNode* right);
+
+// Destroy node and free allocated memory
+// Return success/error code
+int rbTreeNodeDestroy(RBTreeNode* node);
 #endif

@@ -15,7 +15,7 @@ struct Heap {
 // Return newly created Heap, or NULL in the event of error
 Heap* heapCreate(bool isMinHeap)
 {
-    Heap* heap = malloc(sizeof(heap));
+    Heap* heap = malloc(sizeof(Heap));
     if (heap == NULL) {
         return NULL;
     }

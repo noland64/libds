@@ -1,10 +1,10 @@
 CC = gcc
-CFLAGS = -Wall -Iinclude
-
+CFLAGS = -Wall -Wextra -Iinclude -MMD -MP
 LIB = libds.a
 
 SRCS := $(wildcard src/*.c)
 OBJS := $(patsubst src/%.c, build/%.o, $(SRCS))
+DEPS := $(patsubst %.o, %.d, $(OBJS))
 TEST_SRCS = $(wildcard test/*.c)
 TESTS := $(patsubst test/%.c, bin/%, $(TEST_SRCS))
 
@@ -18,9 +18,12 @@ build/%.o: src/%.c
 	@mkdir -p build/
 	$(CC) $(CFLAGS) -c $< -o $@
 
+
 bin/%: test/%.c libds.a
 	@mkdir -p bin/
 	$(CC) $(CFLAGS)  $< -L. -lds -o $@
+
+-include $(DEPS)
 
 test: $(TESTS)
 	@echo "RUNNING TESTS..."

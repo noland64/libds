@@ -10,5 +10,5 @@ int treeMapRemove(TreeMap* tree, int key);
 int treeMapPop(TreeMap* tree, int key);
 int treeMapGet(TreeMap* tree, int key);
 int treeMapSize(TreeMap* tree);
-
+void printInOrder(TreeMap* tree);
 #endif

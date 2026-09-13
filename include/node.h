@@ -9,28 +9,28 @@ typedef struct TreeNode TreeNode;
 typedef struct RBTreeNode RBTreeNode;
 
 struct Node {
-    int val;
     Node* next;
+    int val;
 };
 
 struct DoubleNode {
-    int val;
     DoubleNode* next;
     DoubleNode* prev;
+    int val;
 };
 
 struct TreeNode {
-    int val;
     TreeNode* left;
     TreeNode* right;
+    int val;
 };
 
 struct RBTreeNode {
+    RBTreeNode* left;
+    RBTreeNode* right;
     int key;
     int val;
     bool isRed;
-    RBTreeNode* left;
-    RBTreeNode* right;
 };
 
 Node* node_create(int val, Node* next);

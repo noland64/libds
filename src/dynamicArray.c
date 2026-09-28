@@ -1,30 +1,36 @@
 #include <stdlib.h>
+#include <string.h>
 #include "dynamicArray.h"
 #include "errors.h"
 
 struct DynamicArray
 {
-    int* arr;
-    int num_elems;
-    int size;
+    void* arr;
+    size_t capacity;
+    size_t size;
+    size_t bytesPerElement;
 };
 
 // Create new dynamic array
-DynamicArray* dynamicArrayCreate(void)
+DynamicArray* dynamicArrayCreate(size_t bytesPerElement)
 {
+    if (bytesPerElement == 0) {
+        return NULL;
+    }
     DynamicArray* array = malloc(sizeof(DynamicArray));
     if (array == NULL) {
         return NULL;
     }
-	array->arr = malloc(sizeof(int));
+    array->arr = malloc(bytesPerElement);
     if (array->arr == NULL)
     {
         free(array);
         return NULL;
     }
-	array->size = 1;
-	array->num_elems = 0;
-	return array;
+    array->capacity = 1;
+    array->size = 0;
+    array->bytesPerElement = bytesPerElement;
+    return array;
 }
 
 // Destroy the dynamic array and free its memory
@@ -34,42 +40,47 @@ int dynamicArrayDestroy(DynamicArray* array)
         return NULL_OBJECT_ERROR;
     free(array->arr);
     free(array);
-	return 1;
+    return 1;
 }
 
-int dynamicArrayReplace(DynamicArray* array, int index, int val)
+int dynamicArrayReplace(DynamicArray* array, int index, const void* data)
 {
     if (array == NULL)
         return NULL_OBJECT_ERROR;
-    if ((index < 0) || (index >= array->num_elems))
+    if ((index < 0) || ((size_t) index >= array->size))
         return OUT_OF_BOUNDS_ERROR;
-    array->arr[index] = val;
+    size_t byteOffset = index * array->bytesPerElement;
+    memcpy((char*) array->arr + byteOffset, data, array->bytesPerElement);
     return SUCCESS;
 }
 
 // Insert value at index
-int dynamicArrayInsert(DynamicArray* array, int index, int val)
+int dynamicArrayInsert(DynamicArray* array, int index, const void* data)
 {
-    if (array == NULL)
+    if ((!array) || (!data))
         return NULL_OBJECT_ERROR;
-    if ((index < 0) || (index > array->num_elems))
+    if ((index < 0) || ((size_t) index > array->size))
         return OUT_OF_BOUNDS_ERROR;
 
     // Double size of array if full
-    if (array->num_elems == array->size)
+    if (array->size == array->capacity)
     {
-        array->size *= 2;
-		array->arr = realloc(array->arr, sizeof(int) * array->size);
+        array->capacity *= 2;
+        array->arr = realloc(array->arr, array->bytesPerElement * array->capacity);
     }
     // Shift necessary elements right
-    for (int i = array->num_elems; i > index; i--)
+    size_t byteOffset = array->size * array->bytesPerElement;
+    for (size_t i = array->size; i > (size_t) index; i--)
     {
-        array->arr[i] = array->arr[i-1];
+        mempcpy((char*) array->arr + byteOffset,
+                (char*) array->arr + byteOffset - array->bytesPerElement,
+                array->bytesPerElement);
+        byteOffset -= array->bytesPerElement;
     }
     // Insert new element
-    array->arr[index] = val;
-    array->num_elems++;
-    return 1;
+    memcpy((char*) array->arr + byteOffset, data, array->bytesPerElement);
+    array->size++;
+    return SUCCESS;
 }
 
 
@@ -79,52 +90,65 @@ int dynamicArrayRemove(DynamicArray* array, int index)
     // Check for proper input
     if (array == NULL)
         return NULL_OBJECT_ERROR;
-    if ((index < 0) || (index >= array->num_elems))
+    if ((index < 0) || ((size_t) index >= array->size))
         return OUT_OF_BOUNDS_ERROR;
 
     // Shift necessary items left
-    for (int i = index; i < array->num_elems - 1; i++)
+    for (size_t i = (size_t) index; i < array->size - 1; i++)
     {
-        array->arr[i] = array->arr[i+1];
+        size_t byteOffset = i * array->bytesPerElement;
+        memcpy((char*) array->arr + byteOffset,
+               (char*) array->arr + byteOffset + array->bytesPerElement,
+               array->bytesPerElement);
     }
     // Remove item
-    array->num_elems--;
+    array->size--;
 
     // Shrink array if over half empty
-	if ((array->size > 1) && (array->num_elems < (array->size / 4)))
-	{
-        array->size /= 2;
-		array->arr = realloc(array->arr, sizeof(int) * array->size);
-	}
+    if ((array->capacity > 1) && (array->size < (array->capacity / 4)))
+    {
+        array->capacity /= 2;
+        array->arr = realloc(array->arr, array->bytesPerElement * array->capacity);
+    }
     return 1;
 }
 
 // Returns value at index
-int dynamicArrayGet(DynamicArray* array, int index)
+int dynamicArrayGet(const DynamicArray* array, int index, void* buffer)
 {
     if (array == NULL)
         return NULL_OBJECT_ERROR;
-    if ((index < 0) || (index >= array->num_elems))
+    if ((index < 0) || ((size_t) index >= array->size))
         return OUT_OF_BOUNDS_ERROR;
-    return array->arr[index];
+    size_t byteOffset = (size_t) index * array->bytesPerElement;
+    memcpy(buffer, (char*) array->arr + byteOffset, array->bytesPerElement);
+    return SUCCESS;
 }
 
 // Removes and returns value at index
-int dynamicArrayPop(DynamicArray* array, int index)
+int dynamicArrayPop(DynamicArray* array, int index, void* buffer)
 {
     if (array == NULL)
         return NULL_OBJECT_ERROR;
-    if ((index < 0) || (index >= array->num_elems))
+    if ((index < 0) || ((size_t) index >= array->size))
         return OUT_OF_BOUNDS_ERROR;
-    int val = dynamicArrayGet(array, index);
+    dynamicArrayGet(array, index, buffer);
     dynamicArrayRemove(array, index);
-    return val;
+    return SUCCESS;
 }
 
 // Returns size of array
-int dynamicArraySize(DynamicArray* array)
+size_t dynamicArraySize(const DynamicArray* array)
 {
     if (array == NULL)
-        return NULL_OBJECT_ERROR;
-    return array->num_elems;
+        return 0;
+    return array->size;
+}
+
+size_t dynamicArrayBytesPerElement(const DynamicArray* array)
+{
+    if (!array) {
+        return 0;
+    }
+    return array->bytesPerElement;
 }

@@ -7,13 +7,13 @@ struct Stack {
 	DynamicArray* array;
 };
 
-Stack* stackCreate(void)
+Stack* stackCreate(size_t bytesPerElement)
 {
 	Stack* stack = malloc(sizeof(Stack));
 	if (stack == NULL) {
 		return NULL;
 	}
-	stack->array = dynamicArrayCreate();
+	stack->array = dynamicArrayCreate(bytesPerElement);
 	if (stack->array == NULL)
 	{
 		free(stack);
@@ -31,34 +31,40 @@ int stackDestroy(Stack* stack)
 	return 1;
 }
 
-int stackPush(Stack* stack, int val)
+int stackPush(Stack* stack, const void* data)
 {
 	if (stack == NULL)
 		return NULL_OBJECT_ERROR;
-	return dynamicArrayInsert(stack->array, dynamicArraySize(stack->array), val);
+    size_t arraySize = dynamicArraySize(stack->array);
+	return dynamicArrayInsert(stack->array, arraySize, data);
 }
 
-int stackPop(Stack* stack)
+int stackPop(Stack* stack, void* outputBuffer)
 {
 	if (stack == NULL)
 		return NULL_OBJECT_ERROR;
-	if (dynamicArraySize(stack->array) < 1)
-		return EMPTY_STACK_ERROR;
-	return dynamicArrayPop(stack->array, dynamicArraySize(stack->array)-1);
+    size_t arraySize = dynamicArraySize(stack->array);
+	if (arraySize < 1)
+		return OUT_OF_BOUNDS_ERROR;
+	return dynamicArrayPop(stack->array, arraySize - 1, outputBuffer);
 }
 
-int stackPeek(Stack* stack)
+int stackPeek(const Stack* stack, void* outputBuffer)
 {
-	if (stack == NULL)
+	if (stack == NULL) {
 		return NULL_OBJECT_ERROR;
-	if (dynamicArraySize(stack->array) < 1)
-		return EMPTY_STACK_ERROR;
-	return dynamicArrayGet(stack->array, dynamicArraySize(stack->array)-1);
+    }
+    size_t arraySize = dynamicArraySize(stack->array);
+    if (arraySize < 1) {
+        return OUT_OF_BOUNDS_ERROR;
+    }
+	return dynamicArrayGet(stack->array, arraySize - 1, outputBuffer);
 }
 
-int stackSize(Stack* stack)
+size_t stackSize(const Stack* stack)
 {
-	if (stack == NULL)
-		return 0;
+	if (stack == NULL) {
+		return NULL_OBJECT_ERROR;
+    }
 	return dynamicArraySize(stack->array);
 }

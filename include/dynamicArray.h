@@ -1,32 +1,46 @@
 #ifndef DYNAMIC_ARRAY_H
 #define DYNAMIC_ARRAY_H
 
+#include "errors.h"
+
 typedef struct DynamicArray DynamicArray;
 
-// Create new dynamic array
-DynamicArray* dynamicArrayCreate(void);
+// Create a new DynamicArray for elements of size dataSize
+// Returns a pointer to the newly created DynamicArray, or NULL if an error was encountered
+DynamicArray* dynamicArrayCreate(size_t dataSize);
 
-// Destroy the dynamic array and free its memory
+// Destroy the DynamicArray and free its memory
+// Returns SUCCESS, or an appropriate error code
 int dynamicArrayDestroy(DynamicArray* array);
 
-// Insert value at index
-int dynamicArrayInsert(DynamicArray* array, int index, int val);
+// Insert data into the DynamicArray at index
+// Accepts a pointer to the data to be inserted into the DynamicArray
+// Returns SUCCESS, or an appropriate error code
+int dynamicArrayInsert(DynamicArray* array, int index, const void* data);
 
-// Removes value at index
+// Remove data at the given index in the DynamicArray
+// Returns SUCCESS, or an appropriate error code
 int dynamicArrayRemove(DynamicArray* array, int index);
 
-// Returns value at index
-int dynamicArrayGet(DynamicArray* array, int index);
+// Retrieve data at the given index in the DynamicArray
+// Accepts a pointer to the buffer the data should be written to
+// Returns SUCCESS, or an appropriate error code
+int dynamicArrayGet(const DynamicArray* array, int index, void* buffer);
 
-// Removes and returns value at index
-int dynamicArrayPop(DynamicArray* array, int index);
+// Pop data at the given index in the DynamicArray
+// Accepts a pointer to the buffer the data should be written to
+// Returns SUCCESS, or an appropriate error code
+int dynamicArrayPop(DynamicArray* array, int index, void* buffer);
 
-// Returns size of array
-int dynamicArraySize(DynamicArray* array);
+// Retrieve the size of DynamicArray
+// Accepts a pointer to the buffer the size should be written to
+// Returns SUCCESS, or an appropriate error code
+size_t dynamicArraySize(const DynamicArray* array);
 
-int dynamicArrayReplace(DynamicArray* array, int index, int val);
-/*
-// Returns a string representing the elements of the array
-char* DynamicArraystring(DynamicArray* array);
-*/
+// Replace existing data at the given index in the DynamicArray with given data
+// Accepts a pointer to the data to be inserted into the DynamicArray
+// Returns SUCCESS, or an appropriate error code
+int dynamicArrayReplace(DynamicArray* array, int index, const void* data);
+
+size_t dynamicArrayBytesPerElement(const DynamicArray* array);
 #endif

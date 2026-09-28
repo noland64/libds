@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Iinclude -MMD -MP
+CFLAGS = -Wall -Wextra -Iinclude -MMD -MP -fsanitize=address,undefined
 LIB = libds.a
 
 SRCS := $(wildcard src/*.c)

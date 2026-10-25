@@ -6,17 +6,16 @@
 
 struct Queue {
     Deque* deque;
-    int size;
+    size_t size;
 };
 
-Queue* queueCreate(void)
+Queue* queueCreate(size_t bytesPerElement)
 {
     Queue* queue = malloc(sizeof(Queue));
-    if (queue == NULL) {
+    if (!queue)
         return NULL;
-    }
-    queue->deque = dequeCreate();
-    if (queue->deque == NULL)
+    queue->deque = dequeCreate(bytesPerElement);
+    if (!queue->deque)
     {
         free(queue);
         return NULL;
@@ -27,52 +26,45 @@ Queue* queueCreate(void)
 
 int queueDestroy(Queue* queue)
 {
-    if (queue == NULL) {
+    if (!queue)
         return NULL_OBJECT_ERROR;
-    }
-    if (dequeDestroy(queue->deque) == NULL_OBJECT_ERROR) {
-        return NULL_OBJECT_ERROR;
-    }
+    int status = dequeDestroy(queue->deque);
+    if (status != SUCCESS)
+        return status;
     free(queue);
     return SUCCESS;
 }
 
-int queueEnqueue(Queue* queue, int val)
+int queueEnqueue(Queue* queue, void* value)
 {
-    if (queue == NULL) {
+    if (!queue)
         return NULL_OBJECT_ERROR;
-    }
-    int res = dequePushLeft(queue->deque, val);
-    if (res == SUCCESS) {
+    int res = dequePushLeft(queue->deque, value);
+    if (res == SUCCESS)
         queue->size++;
-    }
     return res;
 }
 
-int queueDequeue(Queue* queue)
+int queueDequeue(Queue* queue, void* output)
 {
-    if (queue == NULL) {
+    if (!queue)
         return NULL_OBJECT_ERROR;
-    }
-    int res = dequePopRight(queue->deque);
-    if (res != OUT_OF_BOUNDS_ERROR) {
+    int res = dequePopRight(queue->deque, output);
+    if (res == SUCCESS)
         queue->size--;
-    }
     return res;
 }
 
-int queuePeek(Queue* queue)
+int queuePeek(Queue* queue, void* output)
 {
-    if (queue == NULL) {
+    if (!queue)
         return NULL_OBJECT_ERROR;
-    }
-    return dequePeekRight(queue->deque);
+    return dequePeekRight(queue->deque, output);
 }
 
-int queueSize(Queue* queue)
+size_t queueSize(Queue* queue)
 {
-    if (queue == NULL) {
-        return NULL_OBJECT_ERROR;
-    }
+    if (queue == NULL)
+        return 0;
     return queue->size;
 }

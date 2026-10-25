@@ -10,13 +10,13 @@ typedef struct RBTreeNode RBTreeNode;
 
 struct Node {
     Node* next;
-    int val;
+    void* value;
 };
 
 struct DoubleNode {
     DoubleNode* next;
     DoubleNode* prev;
-    int val;
+    void* value;
 };
 
 struct TreeNode {
@@ -33,12 +33,12 @@ struct RBTreeNode {
     bool isRed;
 };
 
-Node* node_create(int val, Node* next);
-int node_destroy(Node* node);
+Node* nodeCreate(void* value, size_t valueSizeInBytes, Node* next);
+int nodeDestroy(Node* node);
 
 // Create and allocate memory for new DoubleNode
 // Return newly created DoubleNode, or NULL in the event of error
-DoubleNode* doubleNodeCreate(int val, DoubleNode* prev, DoubleNode* next);
+DoubleNode* doubleNodeCreate(void* value, size_t valueSizeInBytes, DoubleNode* prev, DoubleNode* next);
 
 // Destroy node and free allocated memory
 // Return success/error code

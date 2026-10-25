@@ -6,7 +6,7 @@ typedef struct Deque Deque;
 // dequeCreate(void)
 // Create and allocate memory for new Deque
 // Return newly created Deque, or NULL in the event of error
-Deque* dequeCreate(void);
+Deque* dequeCreate(size_t valueSizeInBytes);
 
 // dequeDestroy(Deque* deque)
 // Destroy deque and free allocated memory
@@ -16,36 +16,36 @@ int dequeDestroy(Deque* deque);
 // dequePushLeft(Deque* deque, int val)
 // Pushes the parameter val to the left side of the Deque in O(1) time
 // Returns success/error code
-int dequePushLeft(Deque* deque, int val);
+int dequePushLeft(Deque* deque, void* value);
 
 // dequePushRight(Deque* deque, int val)
 // Pushes the parameter val to the right side of the Deque in O(1) time
 // Returns success/error code
-int dequePushRight(Deque* deque, int val);
+int dequePushRight(Deque* deque, void* value);
 
 // dequePeekLeft(Deque* deque)
 // Retrieve the leftmost element of the Deque in O(1) time
 // Returns the value, or an error code
-int dequePeekLeft(Deque* deque);
+int dequePeekLeft(Deque* deque, void* output);
 
 // dequePeekRight(Deque* deque)
 // Retrieve the rightmost element of the Deque in O(1) time
 // Returns the value, or an error code
-int dequePeekRight(Deque* deque);
+int dequePeekRight(Deque* deque, void* output);
 
 // dequePopLeft(Deque* deque)
 // Retrieve and remove the leftmost element of the Deque in O(1) time
 // Returns the value, or an error code
-int dequePopLeft(Deque* deque);
+int dequePopLeft(Deque* deque, void* output);
 
 // dequePopRight(Deque* deque)
 // Retrieve and remove the rightmost element of the Deque in O(1) time
 // Returns the value, or an error code
-int dequePopRight(Deque* deque);
+int dequePopRight(Deque* deque, void* output);
 
 // dequeSize(Deque* deque)
 // Retrieve the number of elements in the deque in O(1) time
 // Returns the size, or an error code
-int dequeSize(Deque* deque);
+size_t dequeSize(Deque* deque);
 
 #endif

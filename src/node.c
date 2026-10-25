@@ -1,45 +1,58 @@
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 #include "node.h"
 #include "errors.h"
 
-Node* node_create(int val, Node* next)
+Node* nodeCreate(void* value, size_t valueSizeInBytes, Node* next)
 {
     Node* node = malloc(sizeof(Node));
-    if (node == NULL) {
+    if (!node) {
         return NULL;
     }
     node->next = next;
-    node->val = val;
+    node->value = malloc(valueSizeInBytes);
+    if (!node->value)
+    {
+        free(node);
+        return NULL;
+    }
+    memcpy(node->value, (char*) value, valueSizeInBytes);
     return node;
 }
 
-int node_destroy(Node* node)
+int nodeDestroy(Node* node)
 {
-    if (node == NULL) {
+    if (node == NULL)
         return NULL_OBJECT_ERROR;
-    }
+    if (node->value)
+        free(node->value);
     free(node);
     return SUCCESS;
 }
 
-DoubleNode* doubleNodeCreate(int val, DoubleNode* prev, DoubleNode* next)
+DoubleNode* doubleNodeCreate(void* value, size_t valueSizeInBytes, DoubleNode* prev, DoubleNode* next)
 {
     DoubleNode* node = malloc(sizeof(DoubleNode));
-    if (node == NULL) {
+    if (!node)
         return NULL;
-    }
     node->prev = prev;
     node->next = next;
-    node->val = val;
+    node->value = malloc(valueSizeInBytes);
+    if (!node->value) {
+        free(node);
+        return NULL;
+    }
+    memcpy(node->value, (char*) value, valueSizeInBytes);
     return node;
 }
 
 int doubleNodeDestroy(DoubleNode* node)
 {
-    if (node == NULL) {
+    if (node == NULL)
         return NULL_OBJECT_ERROR;
-    }
+    if (node->value)
+        free(node->value);
     free(node);
     return SUCCESS;
 }

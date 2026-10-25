@@ -1,16 +1,18 @@
 #include <stdlib.h>
-#include "linked_list.h"
+#include <string.h>
+#include "linkedList.h"
 #include "node.h"
 #include "errors.h"
 
 struct LinkedList
 {
     Node* head;
-    int size;
+    size_t size;
+    size_t bytesPerElement;
 };
 
 // Create new linked list
-LinkedList* linked_list_create(void)
+LinkedList* linkedListCreate(size_t bytesPerElement)
 {
     LinkedList* list = malloc(sizeof(LinkedList));
     if (list == NULL) {
@@ -18,28 +20,28 @@ LinkedList* linked_list_create(void)
     }
     list->head = NULL;
     list->size = 0;
+    list->bytesPerElement = bytesPerElement;
     return list;
 }
 
 // Destroy the linked list and free its memory
-int linked_list_destroy(LinkedList* list)
+int linkedListDestroy(LinkedList* list)
 {
-    if (list == NULL)
-    {
+    if (list == NULL) {
         return NULL_OBJECT_ERROR;
     }
     Node* node = list->head;
-    while (node != NULL)
+    while (node)
     {
         Node* next = node->next;
-        node_destroy(node);
+        nodeDestroy(node);
         node = next;
     }
     free(list);
     return SUCCESS;
 }
 
-static Node* node_at_index(LinkedList* list, int index)
+static Node* nodeAtIndex(LinkedList* list, int index)
 {
     if (list == NULL)
         return NULL;
@@ -52,24 +54,24 @@ static Node* node_at_index(LinkedList* list, int index)
 }
 
 // Insert value at index
-int linked_list_insert(LinkedList* list, int index, int val)
+int linkedListInsert(LinkedList* list, int index, void* value)
 {
     if (list == NULL)
         return NULL_OBJECT_ERROR;
     if ((index < 0) || (index > list->size))
         return OUT_OF_BOUNDS_ERROR;
 
-    Node* prev = node_at_index(list, index - 1);
+    Node* prev = nodeAtIndex(list, index - 1);
     if (prev == NULL)
-        list->head = node_create(val, list->head);
+        list->head = nodeCreate(value, list->bytesPerElement, list->head);
     else
-        prev->next = node_create(val, prev->next);
+        prev->next = nodeCreate(value, list->bytesPerElement, prev->next);
     list->size++;
     return SUCCESS;
 }
 
 // Removes value at index
-int linked_list_remove(LinkedList* list, int index)
+int linkedListRemove(LinkedList* list, int index)
 {
     if (list == NULL)
         return NULL_OBJECT_ERROR;
@@ -77,7 +79,7 @@ int linked_list_remove(LinkedList* list, int index)
         return OUT_OF_BOUNDS_ERROR;
 
     // Traverse list to find node at index
-    Node* prev = node_at_index(list, index - 1);
+    Node* prev = nodeAtIndex(list, index - 1);
     Node* removed = list->head;
     if (prev == NULL)
         list->head = (list->head)->next;
@@ -88,23 +90,24 @@ int linked_list_remove(LinkedList* list, int index)
     }
     list->size--;
     // Free the allocated memory for node at index
-    node_destroy(removed);
+    nodeDestroy(removed);
     return SUCCESS;
 }
 
 // Returns value at index
-int linked_list_get(LinkedList* list, int index)
+int linkedListGet(LinkedList* list, int index, void* output)
 {
     if (list == NULL)
         return NULL_OBJECT_ERROR;
     if ((index < 0) || (index >= list->size))
         return OUT_OF_BOUNDS_ERROR;
-
-    return node_at_index(list, index)->val;
+    void* value = nodeAtIndex(list, index)->value;
+    memcpy(output, (char*) value, list->bytesPerElement);
+    return SUCCESS;
 }
 
 // Removes and returns value at index
-int linked_list_pop(LinkedList* list, int index)
+int linkedListPop(LinkedList* list, int index, void* output)
 {
     if (list == NULL)
         return NULL_OBJECT_ERROR;
@@ -112,7 +115,7 @@ int linked_list_pop(LinkedList* list, int index)
         return OUT_OF_BOUNDS_ERROR;
 
     // Traverse list to find node at index
-    Node* prev = node_at_index(list, index - 1);
+    Node* prev = nodeAtIndex(list, index - 1);
     Node* removed = list->head;
     if (prev == NULL)
         list->head = (list->head)->next;
@@ -122,17 +125,18 @@ int linked_list_pop(LinkedList* list, int index)
         prev->next = (prev->next)->next;
     }
     list->size--;
-    int val = removed->val;
+    // Copy the result to the output buffer
+    void* value = removed->value;
+    memcpy(output, (char*) value, list->bytesPerElement);
     // Free the allocated memory for node at index
-    node_destroy(removed);
-    return val;
+    nodeDestroy(removed);
+    return SUCCESS;
 }
 
 // Returns number of elements in list
-int linked_list_size(LinkedList* list)
+size_t linkedListSize(LinkedList* list)
 {
     if (list == NULL)
-        return NULL_OBJECT_ERROR;
-
+        return 0;
     return list->size;
 }

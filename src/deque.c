@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "deque.h"
-#include "doubly_linked_list.h"
+#include "doublyLinkedList.h"
 #include "errors.h"
 
 
@@ -9,103 +9,92 @@
 struct Deque
 {
     DoublyLinkedList* list;
-    int size;
+    size_t bytesPerElement;
+    size_t size;
 };
 
-Deque* dequeCreate(void)
+Deque* dequeCreate(size_t bytesPerElement)
 {
     Deque* deque = malloc(sizeof(Deque));
-    if (deque == NULL) {
+    if (deque == NULL)
         return NULL;
-    }
-    deque->list = dllCreate();
+    deque->list = dllCreate(bytesPerElement);
     if (deque->list == NULL)
     {
         free(deque);
         return NULL;
     }
+    deque->bytesPerElement = bytesPerElement;
     deque->size = 0;
     return deque;
 }
 
 int dequeDestroy(Deque* deque)
 {
-    if (deque == NULL) {
+    if (deque == NULL)
         return NULL_OBJECT_ERROR;
-    }
     dllDestroy(deque->list);
     free(deque);
     return SUCCESS;
 }
 
-int dequePushLeft(Deque* deque, int val)
+int dequePushLeft(Deque* deque, void* value)
 {
-    if (deque == NULL) {
+    if (deque == NULL)
         return NULL_OBJECT_ERROR;
-    }
-    int res = dllInsertLeft(deque->list, val);
-    if (res == SUCCESS) {
+    int res = dllInsertLeft(deque->list, value);
+    if (res == SUCCESS)
         deque->size++;
-    }
     return res;
 }
 
-int dequePushRight(Deque* deque, int val)
+int dequePushRight(Deque* deque, void* value)
 {
-    if (deque == NULL) {
+    if (deque == NULL)
         return NULL_OBJECT_ERROR;
-    }
-    int res = dllInsertRight(deque->list, val);
-    if (res == SUCCESS) {
+    int res = dllInsertRight(deque->list, value);
+    if (res == SUCCESS)
         deque->size++;
-    }
     return res;
 }
 
-int dequePeekLeft(Deque* deque)
+int dequePeekLeft(Deque* deque, void* output)
 {
-    if (deque == NULL) {
+    if (deque == NULL)
         return NULL_OBJECT_ERROR;
-    }
-    return dllGetLeft(deque->list);
+    return dllGetLeft(deque->list, output);
 }
 
-int dequePeekRight(Deque* deque)
+int dequePeekRight(Deque* deque, void* output)
 {
-    if (deque == NULL) {
+    if (deque == NULL)
         return NULL_OBJECT_ERROR;
-    }
-    return dllGetRight(deque->list);
+    return dllGetRight(deque->list, output);
 }
 
-int dequePopLeft(Deque* deque)
+int dequePopLeft(Deque* deque, void* output)
 {
-    if (deque == NULL) {
+    if (deque == NULL)
         return NULL_OBJECT_ERROR;
-    }
-    int res = dllPopLeft(deque->list);
-    if (res != OUT_OF_BOUNDS_ERROR) {
+    int res = dllPopLeft(deque->list, output);
+    if (res == SUCCESS)
         deque->size--;
-    }
     return res;
 }
 
-int dequePopRight(Deque* deque)
+int dequePopRight(Deque* deque, void* output)
 {
-    if (deque == NULL) {
+    if (deque == NULL)
         return NULL_OBJECT_ERROR;
-    }
-    int res = dllPopRight(deque->list);
-    if (res != OUT_OF_BOUNDS_ERROR) {
+    int res = dllPopRight(deque->list, output);
+    if (res == SUCCESS)
         deque->size--;
-    }
     return res;
 }
 
-int dequeSize(Deque* deque)
+size_t dequeSize(Deque* deque)
 {
-    if (deque == NULL) {
+    if (deque == NULL)
         return 0;
-    }
     return deque->size;
 }

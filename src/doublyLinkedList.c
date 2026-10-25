@@ -1,5 +1,6 @@
 #include <stdlib.h>
-#include "doubly_linked_list.h"
+#include <string.h>
+#include "doublyLinkedList.h"
 #include "node.h"
 #include "errors.h"
 
@@ -7,10 +8,11 @@ struct DoublyLinkedList
 {
     DoubleNode* head;
     DoubleNode* tail;
+    size_t bytesPerElement;
     size_t size;
 };
 
-DoublyLinkedList* dllCreate(void)
+DoublyLinkedList* dllCreate(size_t bytesPerElement)
 {
     DoublyLinkedList* list = malloc(sizeof(DoublyLinkedList));
     if (list == NULL) {
@@ -18,6 +20,7 @@ DoublyLinkedList* dllCreate(void)
     }
     list->head = NULL;
     list->tail = NULL;
+    list->bytesPerElement = bytesPerElement;
     list->size = 0;
     return list;
 }
@@ -28,7 +31,7 @@ int dllDestroy(DoublyLinkedList* list)
         return NULL_OBJECT_ERROR;
     }
     DoubleNode* node = list->head;
-    while (node != NULL)
+    while (node)
     {
         DoubleNode* next = node->next;
         doubleNodeDestroy(node);
@@ -94,14 +97,14 @@ static DoubleNode* unlinkNode(DoublyLinkedList* list, int index)
     return removed;
 }
 
-int dllInsert(DoublyLinkedList* list, int index, int val)
+int dllInsert(DoublyLinkedList* list, int index, void* value)
 {
     if (list == NULL)
         return NULL_OBJECT_ERROR;
     if ((index < 0) || (index > list->size))
         return OUT_OF_BOUNDS_ERROR;
 
-    DoubleNode* newNode = doubleNodeCreate(val, NULL, NULL);
+    DoubleNode* newNode = doubleNodeCreate(value, list->bytesPerElement, NULL, NULL);
     if (newNode == NULL)
         return MEMORY_ERROR;
 
@@ -145,16 +148,18 @@ int dllInsert(DoublyLinkedList* list, int index, int val)
     return SUCCESS;
 }
 
-int dllInsertLeft(DoublyLinkedList* list, int val)
-{
-    return dllInsert(list, 0, val);
-}
-
-int dllInsertRight(DoublyLinkedList* list, int val)
+int dllInsertLeft(DoublyLinkedList* list, void* value)
 {
     if (list == NULL)
         return NULL_OBJECT_ERROR;
-    return dllInsert(list, list->size, val);
+    return dllInsert(list, 0, value);
+}
+
+int dllInsertRight(DoublyLinkedList* list, void* value)
+{
+    if (list == NULL)
+        return NULL_OBJECT_ERROR;
+    return dllInsert(list, list->size, value);
 }
 
 // Removes value at index
@@ -177,38 +182,38 @@ int dllRemoveLeft(DoublyLinkedList* list)
 
 int dllRemoveRight(DoublyLinkedList* list)
 {
-    if (list == NULL) {
+    if (list == NULL)
         return NULL_OBJECT_ERROR;
-    }
     return dllRemove(list, list->size - 1);
 }
 
 // Returns value at index
-int dllGet(DoublyLinkedList* list, int index)
+int dllGet(DoublyLinkedList* list, int index, void* output)
 {
     if (list == NULL)
         return NULL_OBJECT_ERROR;
     if ((index < 0) || (index >= list->size))
         return OUT_OF_BOUNDS_ERROR;
-
-    return nodeAtIndex(list, index)->val;
+    // Copy the result to the output buffer
+    void* value = nodeAtIndex(list, index)->value;
+    memcpy(output, (char*) value, list->bytesPerElement);
+    return SUCCESS;
 }
 
-int dllGetLeft(DoublyLinkedList* list)
+int dllGetLeft(DoublyLinkedList* list, void* output)
 {
-    return dllGet(list, 0);
+    return dllGet(list, 0, output);
 }
 
-int dllGetRight(DoublyLinkedList* list)
+int dllGetRight(DoublyLinkedList* list, void* output)
 {
-    if (list == NULL) {
+    if (list == NULL)
         return NULL_OBJECT_ERROR;
-    }
-    return dllGet(list, list->size - 1);
+    return dllGet(list, list->size - 1, output);
 }
 
 // Removes and returns value at index
-int dllPop(DoublyLinkedList* list, int index)
+int dllPop(DoublyLinkedList* list, int index, void* output)
 {
     if (list == NULL)
         return NULL_OBJECT_ERROR;
@@ -216,22 +221,24 @@ int dllPop(DoublyLinkedList* list, int index)
         return OUT_OF_BOUNDS_ERROR;
 
     DoubleNode* removed = unlinkNode(list, index);
-    int val = removed->val;
+    // Copy the result to the output buffer
+    void* value = removed->value;
+    memcpy(output, (char*) value, list->bytesPerElement);
     doubleNodeDestroy(removed);
-    return val;
+    return SUCCESS;
 }
 
-int dllPopLeft(DoublyLinkedList* list)
+int dllPopLeft(DoublyLinkedList* list, void* output)
 {
-    return dllPop(list, 0);
+    return dllPop(list, 0, output);
 }
 
-int dllPopRight(DoublyLinkedList* list)
+int dllPopRight(DoublyLinkedList* list, void* output)
 {
     if (list == NULL) {
         return NULL_OBJECT_ERROR;
     }
-    return dllPop(list, list->size - 1);
+    return dllPop(list, list->size - 1, output);
 }
 
 // Returns size of doubly linked list
@@ -239,6 +246,5 @@ size_t dllSize(DoublyLinkedList* list)
 {
     if (list == NULL)
         return 0;
-
     return list->size;
 }
